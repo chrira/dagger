@@ -16,6 +16,8 @@ A [Dagger.io](https://dagger.io) SDK written in Java.
 
 ## Build
 
+Run all maven commands form the `sdk/java/` folder.
+
 ### Requirements
 
 - Java 17+
@@ -23,10 +25,10 @@ A [Dagger.io](https://dagger.io) SDK written in Java.
 ### Build
 
 Simply run maven to build the jars, run all tests (unit and integration) and install them in your
-local `${HOME}/.m2` repository
+local `${HOME}/.m2` repository.
 
 ```bash
-./mvnw clean install 
+./mvnw clean install
 ```
 
 ### Javadoc
@@ -148,7 +150,7 @@ In order to upgrade the SDK to a new engine version follow these steps:
 1. Download the new dagger CLI (or install it via the package manager of your choice)
 2. Bump dagger engine dependency by updating the `daggerengie.version` property
    in `sdk/java/pom.xml` file
-3. Generate the API schema for the new engine and copy it
+3. Generate the API schema for the new engine and copy it to
    the `dagger-codegen-maven-plugin/src/main/resources/schemas` directory
 
 ```shell
