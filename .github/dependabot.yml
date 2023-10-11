@@ -78,6 +78,17 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
 
+  - package-ecosystem: "maven"
+    directory: "/sdk/java"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "kind/dependencies"
+      - "sdk/java"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+
   # ignore all npm dependencies in sdk/rust
   - package-ecosystem: "npm"
     directory: "/sdk/rust"
