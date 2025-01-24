@@ -2,10 +2,10 @@ package io.dagger.codegen.introspection;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.TypeName;
+import com.palantir.javapoet.ClassName;
+import com.palantir.javapoet.MethodSpec;
+import com.palantir.javapoet.ParameterSpec;
+import com.palantir.javapoet.TypeName;
 import java.util.List;
 import javax.lang.model.element.Modifier;
 
@@ -171,6 +171,9 @@ public class Helpers {
 
   /** Fix using '$' char in javadoc */
   static String escapeJavadoc(String str) {
+    if (str == null) {
+      return "";
+    }
     return str.replace("$", "$$").replace("&", "&amp;");
   }
 }

@@ -5,11 +5,7 @@ import io.dagger.codegen.introspection.CodegenVisitor;
 import io.dagger.codegen.introspection.Schema;
 import io.dagger.codegen.introspection.SchemaVisitor;
 import io.dagger.codegen.introspection.Type;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -44,6 +40,9 @@ public class DaggerCodegenMojo extends AbstractMojo {
   @Parameter(property = "dagger.version", required = true)
   protected String version;
 
+  @Parameter(property = "dagger.introspectionJson")
+  protected String introspectionJson;
+
   /** Specify output directory where the Java files are generated. */
   @Parameter(defaultValue = "${project.build.directory}/generated-sources/dagger")
   private File outputDirectory;
@@ -61,10 +60,8 @@ public class DaggerCodegenMojo extends AbstractMojo {
       outputDir.mkdirs();
     }
 
-    this.bin = DaggerCLIUtils.getBinary(this.bin);
-
     Path dest = outputDir.toPath();
-    try (InputStream in = daggerSchema()) {
+    try (InputStream in = getInstrospectionJson()) {
       Schema schema = Schema.initialize(in, version);
       SchemaVisitor codegen = new CodegenVisitor(schema, dest, Charset.forName(outputEncoding));
       schema.visit(
@@ -99,16 +96,26 @@ public class DaggerCodegenMojo extends AbstractMojo {
               codegen.visitVersion(version);
             }
           });
-    } catch (IOException ioe) {
-      throw new MojoFailureException(ioe);
-    } catch (InterruptedException ie) {
-      throw new MojoFailureException(ie);
+    } catch (IOException | InterruptedException e) {
+      throw new MojoFailureException(e);
     }
 
     if (project != null) {
       // Tell Maven that there are some new source files underneath the output directory.
       project.addCompileSourceRoot(getOutputDirectory().getPath());
     }
+  }
+
+  private InputStream getInstrospectionJson()
+      throws IOException, MojoFailureException, InterruptedException {
+    if (this.introspectionJson != null && !this.introspectionJson.isEmpty()) {
+      File f = new File(this.introspectionJson);
+      if (f.exists()) {
+        return new FileInputStream(f);
+      }
+    }
+    this.bin = DaggerCLIUtils.getBinary(this.bin);
+    return daggerSchema();
   }
 
   private InputStream queryForSchema(InputStream introspectionQuery) {
